@@ -28224,13 +28224,23 @@ var TimerPage = (_dec = (0, _reactRedux.connect)(function (store) {
         _this.toggleTimer = _this.toggleTimer.bind(_this);
         _this.resetTimer = _this.resetTimer.bind(_this);
         _this.displayTime = _this.displayTime.bind(_this);
+        _this.setAlert = _this.setAlert.bind(_this);
         _this.state = {
-            startStop: 'Start'
+            startStop: 'Start',
+            alertId: null,
+            alertClass: null
         };
         return _this;
     }
 
     _createClass(TimerPage, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if (this.props.timer.timerExpired === false && nextProps.timer.timerExpired === true) {
+                this.setAlert();
+            }
+        }
+    }, {
         key: 'toggleTimer',
         value: function toggleTimer() {
             if (this.props.timer.timerRunning) {
@@ -28250,10 +28260,35 @@ var TimerPage = (_dec = (0, _reactRedux.connect)(function (store) {
             return hours.slice(-2) + ':' + minutes.slice(-2) + ':' + seconds.slice(-2);
         }
     }, {
+        key: 'setAlert',
+        value: function setAlert() {
+            var _this2 = this;
+
+            // Set alert effect
+            var intervalID = setInterval(function () {
+                if (_this2.state.alertClass === null) {
+                    _this2.setState({
+                        alertClass: 'timer-run-out-alert'
+                    });
+                } else {
+                    _this2.setState({
+                        alertClass: null
+                    });
+                }
+                // If timer is not expired clear alert
+                if (!_this2.props.timer.timerExpired) {
+                    clearInterval(intervalID);
+                    intervalID = null;
+                    _this2.setState({
+                        alertClass: null
+                    });
+                }
+            }, 500);
+        }
+    }, {
         key: 'resetTimer',
         value: function resetTimer() {
             this.props.dispatch((0, _timerActions.resetTimer)());
-            this.props.dispatch((0, _timerActions.setTimer)(123));
         }
     }, {
         key: 'render',
@@ -28264,7 +28299,7 @@ var TimerPage = (_dec = (0, _reactRedux.connect)(function (store) {
                 { className: 'container' },
                 _react2.default.createElement(
                     'div',
-                    { id: 'timer', className: 'timer' },
+                    { id: 'timer', className: 'timer ' + this.state.alertClass },
                     timeLeft
                 ),
                 _react2.default.createElement(
@@ -28301,22 +28336,37 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 
-var timer = null;
+var timerID = null;
 
 var startTimer = exports.startTimer = function startTimer() {
-    return function (dispatch) {
-        dispatch({
-            type: 'START_TIMER'
-        });
-        timer = setInterval(function () {
-            dispatch(tick());
-        }, 1000);
+    return function (dispatch, getState) {
+        var _getState = getState(),
+            timer = _getState.timer;
+
+        if (timer.timeLeft > 0) {
+            dispatch({
+                type: 'START_TIMER'
+            });
+            timerID = setInterval(function () {
+                dispatch(tick());
+
+                var _getState2 = getState(),
+                    timer = _getState2.timer;
+
+                if (timer.timeLeft <= 0) {
+                    dispatch(timerExpired());
+                    dispatch(stopTimer());
+                }
+            }, 1000);
+        } else {
+            dispatch(error('TIME_ZERO'));
+        }
     };
 };
 
 var stopTimer = exports.stopTimer = function stopTimer() {
-    clearInterval(timer);
-    timer = null;
+    clearInterval(timerID);
+    timerID = null;
     return {
         type: 'STOP_TIMER'
     };
@@ -28347,6 +28397,15 @@ var resetTimer = exports.resetTimer = function resetTimer() {
 var tick = exports.tick = function tick() {
     return {
         type: 'TICK'
+    };
+};
+
+var error = exports.error = function error(_error) {
+    return {
+        type: 'ERROR',
+        payload: {
+            error: _error
+        }
     };
 };
 
@@ -28444,6 +28503,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var initialState = {
     timeLeft: 0,
+    initialTime: 10,
     timerRunning: false,
     timerExpired: false
 };
@@ -28467,6 +28527,7 @@ var timer = function timer() {
         case 'SET_TIMER':
             {
                 return _extends({}, state, {
+                    initialTime: action.payload.timeLeft,
                     timeLeft: action.payload.timeLeft
                 });
             }
@@ -28480,7 +28541,8 @@ var timer = function timer() {
             {
                 return _extends({}, state, {
                     timerRunning: false,
-                    timerExpired: false
+                    timerExpired: false,
+                    timeLeft: state.initialTime
                 });
             }
         case 'TICK':
@@ -28489,7 +28551,6 @@ var timer = function timer() {
                     timeLeft: state.timeLeft - 1
                 });
             }
-
         default:
             {
                 return state;

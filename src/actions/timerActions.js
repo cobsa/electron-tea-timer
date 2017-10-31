@@ -1,21 +1,31 @@
 
 
-let timer = null
+let timerID = null
 
 export const startTimer = () => {
-    return (dispatch) => {
-        dispatch({
-            type: 'START_TIMER'
-        })
-        timer = setInterval( () => {
-            dispatch(tick())
-        }, 1000)
+    return (dispatch, getState) => {
+        let { timer } = getState()
+        if(timer.timeLeft > 0 ) {
+            dispatch({
+                type: 'START_TIMER'
+            })
+            timerID = setInterval( () => {
+                dispatch(tick())
+                let { timer } = getState()
+                if(timer.timeLeft <= 0 ) {
+                    dispatch(timerExpired())
+                    dispatch(stopTimer())
+                }
+            }, 1000)
+        } else {
+            dispatch(error('TIME_ZERO'))
+        }
     }
 }
 
 export const stopTimer = () => {
-    clearInterval(timer)
-    timer = null
+    clearInterval(timerID)
+    timerID = null
     return{
         type: 'STOP_TIMER'
     }
@@ -47,5 +57,14 @@ export const resetTimer = () => {
 export const tick = () => {
     return {
         type: 'TICK'
+    }
+}
+
+export const error = (error) => {
+    return {
+        type: 'ERROR',
+        payload: {
+            error
+        }
     }
 }

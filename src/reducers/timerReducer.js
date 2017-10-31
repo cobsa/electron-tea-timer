@@ -1,5 +1,6 @@
 const initialState = {
     timeLeft: 0,
+    initialTime: 10,
     timerRunning: false, 
     timerExpired: false
 }
@@ -20,6 +21,7 @@ const timer = (state=initialState, action) => {
         case 'SET_TIMER': {
             return {
                 ...state,
+                initialTime: action.payload.timeLeft,
                 timeLeft: action.payload.timeLeft
             }
         }
@@ -33,7 +35,8 @@ const timer = (state=initialState, action) => {
             return {
                 ...state,
                 timerRunning: false,
-                timerExpired: false
+                timerExpired: false,
+                timeLeft: state.initialTime
             }
         }
         case 'TICK' : {
@@ -42,7 +45,6 @@ const timer = (state=initialState, action) => {
                 timeLeft: state.timeLeft -1
             }
         }
-
         default: {
             return state
         }
