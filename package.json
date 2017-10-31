@@ -6,6 +6,7 @@
   "author": "Jaakko Koponen",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^21.2.0",
@@ -36,6 +37,7 @@
     "redux-thunk": "^2.2.0"
   },
   "scripts": {
-    "dev": "webpack && electron ."
+    "dev": "webpack && electron .",
+    "test": "jest --watch"
   }
 }
