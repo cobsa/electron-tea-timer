@@ -6,7 +6,7 @@ import { ConnectedRouter, routerMiddleware } from 'react-router-redux'
 import { applyMiddleware, createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import createHistory from 'history/createBrowserHistory'
+import { createHashHistory } from 'history'
 import logger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 
@@ -17,7 +17,7 @@ import rootReducer from './reducers/rootReducer'
 
 // Define routes etc
 
-const history = createHistory()
+const history = createHashHistory()
 const middleware = routerMiddleware(history)
 
 let store = createStore(
@@ -45,7 +45,7 @@ class MainApp extends React.Component {
         return (
             <ConnectedRouter history={history}>
                 <div>
-                    <Route path="/" component={TimerPage}/>
+                    <Route exact path="/" component={TimerPage}/>
                     <Route path="/setTimer" component={SetTimerPage}/>
                     <div className="application-menus">
                         <div className="set-timer">
@@ -63,7 +63,6 @@ class MainApp extends React.Component {
         )
     }
 }
-
 
 var app = document.getElementById('app')
 ReactDom.render(
