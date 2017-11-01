@@ -13,6 +13,7 @@ import thunkMiddleware from 'redux-thunk'
 // Own packages, pages, components  etc
 import TimerPage from './pages/timerPage'
 import SetTimerPage from './pages/setTimerPage'
+import SettingsPage from './pages/settingsPage'
 import rootReducer from './reducers/rootReducer'
 
 // Define routes etc
@@ -47,6 +48,7 @@ class MainApp extends React.Component {
                 <div>
                     <Route exact path="/" component={TimerPage}/>
                     <Route path="/setTimer" component={SetTimerPage}/>
+                    <Route path="/settings" component={SettingsPage}/>
                     <div className="application-menus">
                         <div className="set-timer">
                             <Link to="/setTimer">Set timer</Link>

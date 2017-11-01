@@ -77,7 +77,7 @@ export default class TimerPage extends React.Component {
         const timeLeft = this.displayTime()
         return(
             <div className='container'>
-                <div id='timer' className={'timer ' + this.state.alertClass}>{timeLeft}</div>
+                <div id='timer' className={'timer push ' + this.state.alertClass}>{timeLeft}</div>
                 <div className='buttons'>
                     <button id='startStopButton' type='button' className='btn btn-primary' onClick={this.toggleTimer}>{this.props.timer.timerRunning ? 'Stop': 'Start'}</button>
                     <button type='button' className='btn btn-default' onClick={this.resetTimer}>Reset</button>

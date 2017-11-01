@@ -8,7 +8,7 @@ let win
 
 function createWindow() {
     // Create window
-    win = new BrowserWindow({width: 400, height: 175, frame: false})
+    win = new BrowserWindow({width: 400, height: 320, frame: false})
     // Populate window
     win.loadURL(url.format({
         pathname: path.join(__dirname,'index.html'),
@@ -16,7 +16,7 @@ function createWindow() {
         slashes: true
     }))
     // Open dev tools
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
 
     win.on('closed', () => {
         win = null
