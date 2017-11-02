@@ -1,4 +1,6 @@
+import storage from 'electron-json-storage'
 
+import {timerJsonFileName} from '../settings/timerSettings.js'
 
 let timerID = null
 
@@ -38,6 +40,9 @@ export const timerExpired = () => {
 }
 
 export const setTimer = (time) => {
+    storage.set(timerJsonFileName, {
+        TIMER_PREVIOUS_VALUE: time
+    })
     return {
         type: 'SET_TIMER',
         payload: {

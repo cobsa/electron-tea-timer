@@ -1,9 +1,12 @@
+const fallBackDefault = 60
+
 const initialState = {
-    timeLeft: 0,
-    initialTime: 10,
+    timeLeft: fallBackDefault,
+    initialTime: fallBackDefault,
     timerRunning: false, 
     timerExpired: false
 }
+
 const timer = (state=initialState, action) => {
     switch(action.type) {
         case 'START_TIMER': {

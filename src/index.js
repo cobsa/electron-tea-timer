@@ -9,12 +9,14 @@ import { Link } from 'react-router-dom'
 import { createHashHistory } from 'history'
 import logger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
+import storage from 'electron-json-storage'
 
 // Own packages, pages, components  etc
 import TimerPage from './pages/timerPage'
 import SetTimerPage from './pages/setTimerPage'
 import SettingsPage from './pages/settingsPage'
 import rootReducer from './reducers/rootReducer'
+import { setTimer } from './actions/timerActions'
 
 // Define routes etc
 
@@ -38,9 +40,27 @@ class MainApp extends React.Component {
     constructor() {
         super()
         this.closeWindow = this.closeWindow.bind(this)
+        this.getPreviousTimerValue = this.getPreviousTimerValue.bind(this)
     }
+
     closeWindow(){
         window.close()
+    }
+
+    componentDidMount() {
+        this.getPreviousTimerValue()
+    }
+
+    getPreviousTimerValue() {
+        let previousValue = 120
+        storage.get('timerSettings',  (error, data) => {
+            let savedValue = data['TIMER_PREVIOUS_VALUE']
+            if (data != null && savedValue != null && Number.isInteger(savedValue)) {
+                previousValue = savedValue
+            }
+            this.props.dispatch(setTimer(previousValue))
+        })
+        
     }
     render() {
         return (

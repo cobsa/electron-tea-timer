@@ -70,7 +70,6 @@ export default class SetTimerPage extends React.Component {
                 break
             }
         }
-        console.log(this.state)
     }
 
     displayTime() {

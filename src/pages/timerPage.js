@@ -2,7 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 // import actions
-import { startTimer, stopTimer, resetTimer, setTimer } from '../actions/timerActions'
+import { startTimer, stopTimer, resetTimer } from '../actions/timerActions'
+
 
 
 @connect( (store) => {
@@ -67,6 +68,11 @@ export default class TimerPage extends React.Component {
                 })
             }
         }, 500)
+
+        // Set operating system notification
+        new Notification('Timer run out',{
+            body: 'Your tea is ready!'
+        })
     }
     
     resetTimer() {

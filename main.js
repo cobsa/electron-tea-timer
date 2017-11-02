@@ -2,6 +2,7 @@ const { app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
 
+
 // global or will be garbage collected
 
 let win
@@ -16,12 +17,14 @@ function createWindow() {
         slashes: true
     }))
     // Open dev tools
-    //win.webContents.openDevTools()
+    win.webContents.openDevTools()
 
     win.on('closed', () => {
         win = null
     })
 }
+
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
