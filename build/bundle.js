@@ -23933,9 +23933,6 @@ var MainApp = (_dec = (0, _reactRedux.connect)(function (store) {
                 var savedValue = data['TIMER_PREVIOUS_VALUE'];
                 if (data != null && savedValue != null && Number.isInteger(savedValue)) {
                     previousValue = savedValue;
-                    console.log('valid read');
-                    console.log(previousValue);
-                    console.log(savedValue);
                 }
                 _this2.props.dispatch((0, _timerActions.setTimer)(previousValue));
             });
