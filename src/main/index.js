@@ -10,11 +10,11 @@ let mainWindow
 
 function createMainWindow() {
   // Construct new BrowserWindow
-  const window = new BrowserWindow({width: 400, height: 320, frame: false})
+  const window = new BrowserWindow({ width: 400, height: 320, frame: false })
 
   // Set url for `win`
-    // points to `webpack-dev-server` in development
-    // points to `index.html` in production
+  // points to `webpack-dev-server` in development
+  // points to `index.html` in production
   const url = isDevelopment
     ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
     : `file://${__dirname}/index.html`

@@ -24,78 +24,74 @@ import './static/css/default.style.css'
 const gearSvg = require('./static/images/svg/si-glyph-gear.svg')
 const closeSvg = require('./static/images/svg/si-glyph-delete.svg')
 
-
 // Define routes etc
 
 const history = createHashHistory()
 const middleware = routerMiddleware(history)
 
-let store = createStore(
-    rootReducer,
-    applyMiddleware(
-        thunkMiddleware,
-        logger
-    )
-)
-@connect ( (store) => {
-    return {
-        timeLeft: 12
-    }
-
+let store = createStore(rootReducer, applyMiddleware(thunkMiddleware, logger))
+@connect(store => {
+  return {
+    timeLeft: 12
+  }
 })
 class MainApp extends React.Component {
-    constructor() {
-        super()
-        this.closeWindow = this.closeWindow.bind(this)
-        this.getPreviousTimerValue = this.getPreviousTimerValue.bind(this)
-    }
+  constructor() {
+    super()
+    this.closeWindow = this.closeWindow.bind(this)
+    this.getPreviousTimerValue = this.getPreviousTimerValue.bind(this)
+  }
 
-    closeWindow(){
-        window.close()
-    }
+  closeWindow() {
+    window.close()
+  }
 
-    componentDidMount() {
-        this.getPreviousTimerValue()
-    }
+  componentDidMount() {
+    this.getPreviousTimerValue()
+  }
 
-    getPreviousTimerValue() {
-        let previousValue = 120
-        storage.get('timerSettings',  (error, data) => {
-            let savedValue = data['TIMER_PREVIOUS_VALUE']
-            if (data != null && savedValue != null && Number.isInteger(savedValue)) {
-                previousValue = savedValue
-            }
-            this.props.dispatch(setTimer(previousValue))
-        })
-        
-    }
-    render() {
-        return (
-            <ConnectedRouter history={history}>
-                <div>
-                    <Route exact path="/" component={TimerPage}/>
-                    <Route path="/setTimer" component={SetTimerPage}/>
-                    <Route path="/settings" component={SettingsPage}/>
-                    <div className="application-menus">
-                        <div className="set-timer">
-                            <Link to="/setTimer">Set timer</Link>
-                        </div>
-                        <div className="settings">
-                            <Link to="/settings"><img src={gearSvg}/></Link>
-                        </div>
-                        <div className="close">
-                            <a onClick={this.closeWindow}><img src={closeSvg}/></a>
-                        </div>
-                    </div>
-                </div>
-            </ConnectedRouter>
-        )
-    }
+  getPreviousTimerValue() {
+    let previousValue = 120
+    storage.get('timerSettings', (error, data) => {
+      let savedValue = data['TIMER_PREVIOUS_VALUE']
+      if (data != null && savedValue != null && Number.isInteger(savedValue)) {
+        previousValue = savedValue
+      }
+      this.props.dispatch(setTimer(previousValue))
+    })
+  }
+  render() {
+    return (
+      <ConnectedRouter history={history}>
+        <div>
+          <Route exact path="/" component={TimerPage} />
+          <Route path="/setTimer" component={SetTimerPage} />
+          <Route path="/settings" component={SettingsPage} />
+          <div className="application-menus">
+            <div className="set-timer">
+              <Link to="/setTimer">Set timer</Link>
+            </div>
+            <div className="settings">
+              <Link to="/settings">
+                <img src={gearSvg} />
+              </Link>
+            </div>
+            <div className="close">
+              <a onClick={this.closeWindow}>
+                <img src={closeSvg} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </ConnectedRouter>
+    )
+  }
 }
 
 var app = document.getElementById('app')
 ReactDom.render(
-    <Provider store={store}>
-        <MainApp/>
-    </Provider>
-    , app)
+  <Provider store={store}>
+    <MainApp />
+  </Provider>,
+  app
+)
