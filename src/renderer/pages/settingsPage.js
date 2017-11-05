@@ -5,6 +5,11 @@ export default class SettingsPage extends React.Component {
     return (
       <div className="container">
         <div className="timer">Settings</div>
+        <div className="settingsList">
+          <ul>
+            <li> Playback sound</li>
+          </ul>
+        </div>
         <div className="buttons">
           <button type="button" className="btn btn-success" onClick={this.confirm}>
             Set

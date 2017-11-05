@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 // import actions
 import { startTimer, stopTimer, resetTimer } from '../actions/timerActions'
+const audio = require('../static/sounds/default_alarm.wav')
 
 @connect(store => {
   return {
@@ -15,7 +16,7 @@ export default class TimerPage extends React.Component {
     this.toggleTimer = this.toggleTimer.bind(this)
     this.resetTimer = this.resetTimer.bind(this)
     this.displayTime = this.displayTime.bind(this)
-    this.setAlert = this.setAlert.bind(this)
+    this.alert = this.alert.bind(this)
     this.state = {
       startStop: 'Start',
       alertId: null,
@@ -25,7 +26,7 @@ export default class TimerPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.timer.timerExpired === false && nextProps.timer.timerExpired === true) {
-      this.setAlert()
+      this.alert()
     }
   }
 
@@ -45,7 +46,11 @@ export default class TimerPage extends React.Component {
     return hours.slice(-2) + ':' + minutes.slice(-2) + ':' + seconds.slice(-2)
   }
 
-  setAlert() {
+  alert() {
+    // Play alert sound
+    let audioFile = new Audio(audio)
+    audioFile.currentTime = 0
+    audioFile.play()
     // Set alert effect
     let intervalID = setInterval(() => {
       if (this.state.alertClass === null) {
@@ -64,6 +69,9 @@ export default class TimerPage extends React.Component {
         this.setState({
           alertClass: null
         })
+        // Stop audio from playing
+        audioFile.pause()
+        console.log(audioFile)
       }
     }, 500)
 
