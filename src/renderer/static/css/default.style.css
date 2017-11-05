@@ -1,0 +1,104 @@
+html, body {
+    margin: 0;
+    -webkit-app-region: drag;
+}
+button {
+    -webkit-app-region: no-drag
+}
+a {
+    -webkit-app-region: no-drag
+}
+.container {
+    margin-top: 40px;
+    min-height: 100%;
+    margin-bottom: -50px;
+}
+footer, .push {
+    height: 50px;
+}
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.timer {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.timer-run-out-alert {
+    background-color: red;
+}
+img {
+    height: 20px;
+}
+.application-menus {
+    display: flex;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    justify-content: flex-end;
+    color: white;
+}
+.close {
+    margin-left: 10px;
+}
+
+.settings {
+    margin-left: 10px;
+}
+.settings:hover:focus {
+    opacity: 1;
+}
+.set-timer a{
+    color: grey;
+    font-size: 18px
+}
+.set-timer a:hover {
+    color: white;
+    text-decoration: none;
+}
+.si-glyph * {
+    fill: white;
+}
+.buttons {
+    width: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+button {
+    margin-left: 10px;
+}
+
+.btn-change {
+    background-color: transparent;
+    color: white;
+    margin-right: 15px;
+}
+.upButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.downButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.push {
+    margin-top: 80px;
+    margin-bottom: 30px;
+}
+a {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:focus  {
+    text-decoration: none;
+}

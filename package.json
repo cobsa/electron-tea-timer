@@ -1,30 +1,14 @@
 {
-  "name": "electron-react-tea-timer",
-  "version": "0.1.0",
-  "description": "Simple timer with electron and react",
-  "main": "main.js",
+  "name": "electron-tea-timer",
+  "description": "Simple timer application with Electron/React",
   "author": "Jaakko Koponen",
+  "version": "0.1.0",
   "license": "MIT",
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-jest": "^21.2.0",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "electron": "^1.7.9",
-    "electron-builder": "^19.43.4",
-    "eslint": "^4.10.0",
-    "eslint-config-google": "^0.9.1",
-    "eslint-plugin-jest": "^21.2.0",
-    "eslint-plugin-react": "^7.4.0",
-    "jest": "^21.2.1",
-    "redux-logger": "^3.0.6",
-    "webpack": "^3.8.1"
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
   },
   "dependencies": {
     "electron-json-storage": "^4.0.2",
@@ -36,17 +20,24 @@
     "react-router-dom": "^4.2.2",
     "react-router-redux": "next",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "source-map-support": "^0.5.0"
   },
-  "scripts": {
-    "dev": "webpack && electron .",
-    "test": "jest --watch",
-    "dist": "electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+  "devDependencies": {
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "electron": "1.7.9",
+    "electron-builder": "^19.42.1",
+    "electron-webpack": "1.10.1",
+    "jest": "^21.2.1",
+    "redux-logger": "^3.0.6",
+    "svg-loader": "^0.0.2",
+    "webpack": "^3.8.1"
   },
-  "build": {
-    "win": {
-      "target": "nsis"
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "webpack.renderer.additions.js"
     }
   }
 }

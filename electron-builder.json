@@ -1,0 +1,6 @@
+{
+    "appId": "com.cobsa.electron-teatimer",
+    "win": {
+        "target": "portable"
+    }
+}
