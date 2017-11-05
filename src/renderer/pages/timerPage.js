@@ -1,9 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import Config from 'electron-config'
 
 // import actions
 import { startTimer, stopTimer, resetTimer } from '../actions/timerActions'
+// Import audio
 const audio = require('../static/sounds/default_alarm.wav')
+// Import storage constants
+import { timerPlayAlert } from '../settings/timerSettings.js'
 
 @connect(store => {
   return {
@@ -17,6 +21,7 @@ export default class TimerPage extends React.Component {
     this.resetTimer = this.resetTimer.bind(this)
     this.displayTime = this.displayTime.bind(this)
     this.alert = this.alert.bind(this)
+    this.setAudioAlert = this.setAudioAlert.bind(this)
     this.state = {
       startStop: 'Start',
       alertId: null,
@@ -25,6 +30,7 @@ export default class TimerPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // if state changes from timerExpired false => true
     if (this.props.timer.timerExpired === false && nextProps.timer.timerExpired === true) {
       this.alert()
     }
@@ -47,11 +53,19 @@ export default class TimerPage extends React.Component {
   }
 
   alert() {
-    // Play alert sound
-    let audioFile = new Audio(audio)
-    audioFile.currentTime = 0
-    audioFile.play()
-    // Set alert effect
+    /*
+    Fired when timer expires
+    */
+
+    // Check if alert audio should be played
+    let config = new Config()
+    let playAlertValue = config.get(timerPlayAlert, [undefined])
+    if (playAlertValue !== undefined && playAlertValue == true) {
+      this.setAudioAlert()
+    }
+
+    // Set visual effect when timer expires
+
     let intervalID = setInterval(() => {
       if (this.state.alertClass === null) {
         this.setState({
@@ -62,6 +76,7 @@ export default class TimerPage extends React.Component {
           alertClass: null
         })
       }
+
       // If timer is not expired clear alert
       if (!this.props.timer.timerExpired) {
         clearInterval(intervalID)
@@ -69,9 +84,6 @@ export default class TimerPage extends React.Component {
         this.setState({
           alertClass: null
         })
-        // Stop audio from playing
-        audioFile.pause()
-        console.log(audioFile)
       }
     }, 500)
 
@@ -79,6 +91,21 @@ export default class TimerPage extends React.Component {
     new Notification('Timer run out', {
       body: 'Your tea is ready!'
     })
+  }
+
+  setAudioAlert() {
+    // Play alert sound
+    let audioFile = new Audio(audio)
+    audioFile.currentTime = 0
+    audioFile.play()
+    // Set listener to stop audio from playing when reset is pressed
+    let audioAlertIntervalID = setInterval(() => {
+      if (!this.props.timer.timerExpired) {
+        clearInterval(audioAlertIntervalID)
+        audioAlertIntervalID = null
+        audioFile.pause()
+      }
+    }, 500)
   }
 
   resetTimer() {

@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import { createHashHistory } from 'history'
 import logger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
-import storage from 'electron-json-storage'
+import Config from 'electron-config'
 
 // Own packages, pages, components  etc
 import TimerPage from './pages/timerPage'
@@ -23,6 +23,8 @@ import './static/css/default.style.css'
 // Import pictures
 const gearSvg = require('./static/images/svg/si-glyph-gear.svg')
 const closeSvg = require('./static/images/svg/si-glyph-delete.svg')
+// Import settings constants
+import { timerPreviousValue } from './settings/timerSettings'
 
 // Define routes etc
 
@@ -51,14 +53,8 @@ class MainApp extends React.Component {
   }
 
   getPreviousTimerValue() {
-    let previousValue = 120
-    storage.get('timerSettings', (error, data) => {
-      let savedValue = data['TIMER_PREVIOUS_VALUE']
-      if (data != null && savedValue != null && Number.isInteger(savedValue)) {
-        previousValue = savedValue
-      }
-      this.props.dispatch(setTimer(previousValue))
-    })
+    let config = new Config()
+    this.props.dispatch(setTimer(config.get(timerPreviousValue, [120])))
   }
   render() {
     return (

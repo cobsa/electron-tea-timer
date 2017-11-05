@@ -1,3 +1,4 @@
+/*Set items Dragable*/
 html,
 body {
   margin: 0;
@@ -9,6 +10,10 @@ button {
 a {
   -webkit-app-region: no-drag;
 }
+input {
+  -webkit-app-region: no-drag;
+}
+/* End of: Set items Dragable*/
 .container {
   margin-top: 40px;
   min-height: 100%;
