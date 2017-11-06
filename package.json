@@ -12,6 +12,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "dataurl": "^0.1.0",
     "electron-config": "^1.0.0",
     "history": "^4.7.2",
     "react": "^16.0.0",

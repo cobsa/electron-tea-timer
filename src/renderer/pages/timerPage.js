@@ -1,13 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Config from 'electron-config'
+import fs from 'fs'
+import dataurl from 'dataurl'
 
-// import actions
+// Import actions
 import { startTimer, stopTimer, resetTimer } from '../actions/timerActions'
-// Import audio
-const audio = require('../static/sounds/default_alarm.wav')
+// Import default audio file
+const defaultAudio = require('../static/sounds/default_alarm.wav')
 // Import storage constants
-import { timerPlayAlert } from '../settings/timerSettings.js'
+import { timerPlayAlert, userAlarmFile } from '../settings/timerSettings.js'
 
 @connect(store => {
   return {
@@ -17,11 +19,16 @@ import { timerPlayAlert } from '../settings/timerSettings.js'
 export default class TimerPage extends React.Component {
   constructor() {
     super()
+    // Bindings
     this.toggleTimer = this.toggleTimer.bind(this)
     this.resetTimer = this.resetTimer.bind(this)
     this.displayTime = this.displayTime.bind(this)
     this.alert = this.alert.bind(this)
     this.setAudioAlert = this.setAudioAlert.bind(this)
+    this.convertSong = this.convertSong.bind(this)
+    this.playAudioAlert = this.playAudioAlert.bind(this)
+    // State and variables
+    this.config = new Config()
     this.state = {
       startStop: 'Start',
       alertId: null,
@@ -52,14 +59,26 @@ export default class TimerPage extends React.Component {
     return hours.slice(-2) + ':' + minutes.slice(-2) + ':' + seconds.slice(-2)
   }
 
+  convertSong(fileName) {
+    // Async load of audio file. Returns promise
+    const songPromise = new Promise((resolve, reject) => {
+      fs.readFile(fileName, (err, data) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(dataurl.convert({ data, mimetype: 'audio/wav' }))
+      })
+    })
+    return songPromise
+  }
+
   alert() {
     /*
     Fired when timer expires
     */
 
     // Check if alert audio should be played
-    let config = new Config()
-    let playAlertValue = config.get(timerPlayAlert, [undefined])
+    let playAlertValue = this.config.get(timerPlayAlert, [undefined])
     if (playAlertValue !== undefined && playAlertValue == true) {
       this.setAudioAlert()
     }
@@ -94,8 +113,21 @@ export default class TimerPage extends React.Component {
   }
 
   setAudioAlert() {
-    // Play alert sound
-    let audioFile = new Audio(audio)
+    // Play alert sound. Custom if set by user, otherwise default.
+    let audioFile
+    if (this.config.has(userAlarmFile)) {
+      let userAudioFile = this.config.get(userAlarmFile, [undefined]).toString()
+      this.convertSong(userAudioFile).then(data => {
+        audioFile = new Audio(data)
+        this.playAudioAlert(audioFile)
+      })
+    } else {
+      audioFile = new Audio(defaultAudio)
+      this.playAudioAlert(audioFile)
+    }
+  }
+
+  playAudioAlert(audioFile) {
     audioFile.currentTime = 0
     audioFile.play()
     // Set listener to stop audio from playing when reset is pressed

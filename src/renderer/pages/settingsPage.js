@@ -1,17 +1,22 @@
 import React from 'react'
 import Config from 'electron-config'
 import { Redirect } from 'react-router-dom'
+import electron from 'electron'
 
-import { timerPlayAlert } from '../settings/timerSettings'
+import { timerPlayAlert, userAlarmFile } from '../settings/timerSettings'
 
 export default class SettingsPage extends React.Component {
   constructor() {
     super()
+    // Bindings
     this.togglePlayAlert = this.togglePlayAlert.bind(this)
     this.goBack = this.goBack.bind(this)
-    let config = new Config()
+    this.openFilePrompt = this.openFilePrompt.bind(this)
+    this.useDefault = this.useDefault.bind(this)
+    // Variables
+    this.config = new Config()
     this.state = {
-      playAlert: config.get(timerPlayAlert),
+      playAlert: this.config.get(timerPlayAlert),
       done: false
     }
   }
@@ -22,8 +27,7 @@ export default class SettingsPage extends React.Component {
       playAlert
     })
     // Save value to settings
-    let config = new Config()
-    config.set(timerPlayAlert, playAlert)
+    this.config.set(timerPlayAlert, playAlert)
   }
 
   goBack() {
@@ -31,9 +35,32 @@ export default class SettingsPage extends React.Component {
       done: true
     })
   }
+
+  useDefault() {
+    // Set settings value for timerPlayAlert to undefined, so default audio gets played
+    this.config.delete(userAlarmFile)
+    this.forceUpdate()
+  }
+
+  openFilePrompt() {
+    electron.remote.dialog.showOpenDialog(
+      { properties: ['openFile'], filters: [{ name: 'Audio', extensions: ['wav'] }] },
+      filePath => {
+        // Save selected file to settings
+        this.config.set(userAlarmFile, filePath)
+        this.forceUpdate()
+      }
+    )
+  }
   render() {
     if (this.state.done) {
       return <Redirect to="/" />
+    }
+    let userAudio
+    if (this.config.has(userAlarmFile)) {
+      userAudio = this.config.get(userAlarmFile)
+    } else {
+      userAudio = 'Default'
     }
     return (
       <div className="container">
@@ -50,7 +77,12 @@ export default class SettingsPage extends React.Component {
             </li>
             <li>
               <label>Choose alarm sound</label>
-              <input type="file" value="Choose" />
+              <button onClick={this.openFilePrompt}>Choose file</button>
+              <button onClick={this.useDefault}>Default</button>
+            </li>
+            <li>
+              <label>Current alert</label>
+              <small>{userAudio}</small>
             </li>
           </ul>
         </div>
