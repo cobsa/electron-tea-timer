@@ -2,8 +2,10 @@ import React from 'react'
 import Config from 'electron-config'
 import { Redirect } from 'react-router-dom'
 import electron from 'electron'
-
-import { timerPlayAlert, userAlarmFile } from '../settings/timerSettings'
+// Import constants
+import { timerPlayAlert, userAlarmFile, userAlarmVolume } from '../settings/timerSettings'
+// Import audio interface
+import { setAudioAlert, playAudioAlert, stopAudioAlert } from '../components/alertSound'
 
 export default class SettingsPage extends React.Component {
   constructor() {
@@ -13,11 +15,13 @@ export default class SettingsPage extends React.Component {
     this.goBack = this.goBack.bind(this)
     this.openFilePrompt = this.openFilePrompt.bind(this)
     this.useDefault = this.useDefault.bind(this)
+    this.handleVolume = this.handleVolume.bind(this)
     // Variables
     this.config = new Config()
     this.state = {
       playAlert: this.config.get(timerPlayAlert),
-      done: false
+      done: false,
+      volume: 50
     }
   }
 
@@ -34,6 +38,17 @@ export default class SettingsPage extends React.Component {
     this.setState({
       done: true
     })
+    stopAudioAlert()
+  }
+
+  handleVolume(event) {
+    // Set state and trigger playback&saving volume to userSettings
+    let volume = event.target.value
+    this.setState({
+      volume
+    })
+    this.config.set(userAlarmVolume, volume)
+    setAudioAlert()
   }
 
   useDefault() {
@@ -83,6 +98,17 @@ export default class SettingsPage extends React.Component {
             <li>
               <label>Current alert</label>
               <small>{userAudio}</small>
+            </li>
+            <li>
+              <label>Alert Volume</label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={this.state.volume}
+                className="slider"
+                onChange={this.handleVolume}
+              />
             </li>
           </ul>
         </div>
