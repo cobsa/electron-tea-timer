@@ -35,7 +35,7 @@ footer {
   justify-content: center;
 }
 .timer-run-out-alert {
-  background-color: red;
+  color: red;
 }
 img {
   height: 20px;

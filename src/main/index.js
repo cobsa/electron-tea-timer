@@ -1,6 +1,9 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
+import Config from 'electron-config'
+// Import constants
+import { userAlwaysOnTop } from '../renderer/settings/timerSettings.js'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -9,8 +12,17 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 
 function createMainWindow() {
+  // Load user settings
+  let config = new Config()
+  let userSettingsTop = config.get(userAlwaysOnTop, [false])
   // Construct new BrowserWindow
-  const window = new BrowserWindow({ width: 500, height: 400, frame: false })
+  const window = new BrowserWindow({
+    width: 500,
+    height: 400,
+    frame: false,
+    resizable: isDevelopment, // Resizable in development and not in production
+    alwaysOnTop: userSettingsTop
+  })
 
   // Set url for `win`
   // points to `webpack-dev-server` in development

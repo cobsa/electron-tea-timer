@@ -40,7 +40,9 @@ export const playAudioAlert = (audio, volume) => {
 
 export const stopAudioAlert = () => {
   // Stop audio from playing if it is playing
-  audioFile.pause()
+  if (audioFile != undefined) {
+    audioFile.pause()
+  }
 }
 
 export const convertSong = fileName => {

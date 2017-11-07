@@ -3,7 +3,12 @@ import Config from 'electron-config'
 import { Redirect } from 'react-router-dom'
 import electron from 'electron'
 // Import constants
-import { timerPlayAlert, userAlarmFile, userAlarmVolume } from '../settings/timerSettings'
+import {
+  timerPlayAlert,
+  userAlarmFile,
+  userAlarmVolume,
+  userAlwaysOnTop
+} from '../settings/timerSettings'
 // Import audio interface
 import { setAudioAlert, playAudioAlert, stopAudioAlert } from '../components/alertSound'
 
@@ -16,12 +21,14 @@ export default class SettingsPage extends React.Component {
     this.openFilePrompt = this.openFilePrompt.bind(this)
     this.useDefault = this.useDefault.bind(this)
     this.handleVolume = this.handleVolume.bind(this)
+    this.toggleAlwaysOnTop = this.toggleAlwaysOnTop.bind(this)
     // Variables
     this.config = new Config()
     this.state = {
-      playAlert: this.config.get(timerPlayAlert),
+      playAlert: this.config.get(timerPlayAlert, [true]),
       done: false,
-      volume: 50
+      volume: 50,
+      alwaysOnTop: this.config.get(userAlwaysOnTop, [false])
     }
   }
 
@@ -32,6 +39,15 @@ export default class SettingsPage extends React.Component {
     })
     // Save value to settings
     this.config.set(timerPlayAlert, playAlert)
+  }
+  toggleAlwaysOnTop(event) {
+    let alwaysOnTop = event.target.checked
+    this.setState({
+      alwaysOnTop
+    })
+    // Save value to settings
+    this.config.set(userAlwaysOnTop, alwaysOnTop)
+    electron.remote.getCurrentWindow().setAlwaysOnTop(alwaysOnTop)
   }
 
   goBack() {
@@ -108,6 +124,14 @@ export default class SettingsPage extends React.Component {
                 value={this.state.volume}
                 className="slider"
                 onChange={this.handleVolume}
+              />
+            </li>
+            <li>
+              <label>Always on top</label>
+              <input
+                type="checkbox"
+                checked={this.state.alwaysOnTop}
+                onChange={this.toggleAlwaysOnTop}
               />
             </li>
           </ul>
