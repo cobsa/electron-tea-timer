@@ -1,23 +1,36 @@
-import timer from '../timerReducer'
-import * as actions from '../../actions/timerActions'
+import timer from '../renderer/reducers/timerReducer'
+import * as actions from '../renderer/actions/timerActions'
+
+// Mock electron-config
+jest.mock('electron-config')
+const Config = require('electron-config')
+const mMock = jest.fn()
+Config.mockImplementation(() => {
+  return {
+    m: mMock
+  }
+})
 
 describe('Timer Reducer', () => {
   it('Should return Initial state', () => {
     expect(timer(undefined, {})).toEqual({
-      timeLeft: 0,
+      timeLeft: 60,
+      initialTime: 60,
       timerRunning: false,
       timerExpired: false
     })
   })
   it('Should start and stop timer', () => {
     const runningState = {
-      timeLeft: 0,
+      timeLeft: 60,
+      initialTime: 60,
       timerRunning: true,
       timerExpired: false
     }
-    expect(timer(undefined, actions.startTimer())).toEqual(runningState)
+    expect(timer(undefined, { type: 'START_TIMER' })).toEqual(runningState)
     expect(timer(runningState, actions.stopTimer())).toEqual({
-      timeLeft: 0,
+      timeLeft: 60,
+      initialTime: 60,
       timerRunning: false,
       timerExpired: false
     })
@@ -26,13 +39,15 @@ describe('Timer Reducer', () => {
     const timeLeft = 1233
     expect(timer(undefined, actions.setTimer(timeLeft))).toEqual({
       timeLeft,
+      initialTime: timeLeft,
       timerRunning: false,
       timerExpired: false
     })
   })
   it('Should set timerExpired to true', () => {
     expect(timer(undefined, actions.timerExpired())).toEqual({
-      timeLeft: 0,
+      timeLeft: 60,
+      initialTime: 60,
       timerRunning: false,
       timerExpired: true
     })
@@ -40,11 +55,13 @@ describe('Timer Reducer', () => {
   it('Should reset timer', () => {
     const runningState = {
       timeLeft: 23,
+      initialTime: 23,
       timerRunning: true,
       timerExpired: true
     }
-    expect(timer(runningState, actions.resetTimer())).toEqual({
+    expect(timer(runningState, { type: 'RESET_TIMER' })).toEqual({
       timeLeft: 23,
+      initialTime: 23,
       timerRunning: false,
       timerExpired: false
     })
